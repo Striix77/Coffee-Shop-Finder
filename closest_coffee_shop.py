@@ -4,33 +4,12 @@ import urllib.request
 import csv
 
 
-# Calculate Euclidean distance between two 2D points.
-def distance(x1, y1, x2, y2):
-    return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-
-# Print an error message to stderr and exit with non-zero status.
-def error_exit(message):
-    print(message, file=sys.stderr)
-    exit(1)
-
-def main():
-    if len(sys.argv) != 4:
-        error_exit("Usage: python closest_coffee_shop.py <user x coordinate> <user y coordinate> <shop data url>")
-
-    # Parse the user-provided coordinates as floats.
-    try:
-        user_x = float(sys.argv[1])
-        user_y = float(sys.argv[2])
-    except ValueError:
-        error_exit("User coordinates must be valid float numbers.")
-
-    # Third argument is a URL that points to the data.
-    shop_data_url = sys.argv[3]
-
+# Fetch and parse the shop data from the given URL, returning a list of (name, x, y) tuples.
+def fetch_and_parse(url):
     # Fetch the data from the URL and split it into lines.
     # The context manager ensures the response is always closed.
     try:
-        with urllib.request.urlopen(shop_data_url) as response:
+        with urllib.request.urlopen(url) as response:
             data = response.read().decode('utf-8').splitlines()
     except Exception as e:
         error_exit(f"Error fetching shop data: {e}")
@@ -54,16 +33,49 @@ def main():
             shop_y = float(row[2].strip())
         except ValueError:
             error_exit("Invalid coordinates in row: " + ",".join(row))
+        shops.append((name, shop_x, shop_y))
+    
+    return shops
 
-        # Calculate distance from the user to this shop.
+
+# Calculate Euclidean distance between two 2D points.
+def distance(x1, y1, x2, y2):
+    return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+
+
+# Calculate the closest shops to the user and return a list of (name, distance) tuples for the n closest shops.
+def calculate_closest_shops(user_x, user_y, shops, n=3):
+    closest_shops = []
+    for name, shop_x, shop_y in shops:
         dist = distance(user_x, user_y, shop_x, shop_y)
-
-        # Store tuple of (name, distance) for later sorting.
-        shops.append((name, dist))
+        closest_shops.append((name, dist))
 
     # Sort by the second tuple element (distance), ascending.
-    shops.sort(key=lambda x: x[1])
-    closest_shops = shops[:3]
+    closest_shops.sort(key=lambda x: x[1])
+    return closest_shops[:n]
+
+
+# Print an error message to stderr and exit with non-zero status.
+def error_exit(message):
+    print(message, file=sys.stderr)
+    exit(1)
+
+
+def main():
+    if len(sys.argv) != 4:
+        error_exit("Usage: python closest_coffee_shop.py <user x coordinate> <user y coordinate> <shop data url>")
+
+    # Parse the user-provided coordinates as floats.
+    try:
+        user_x = float(sys.argv[1])
+        user_y = float(sys.argv[2])
+    except ValueError:
+        error_exit("User coordinates must be valid float numbers.")
+
+    shop_data_url = sys.argv[3]
+
+    shops = fetch_and_parse(shop_data_url)
+    closest_shops = calculate_closest_shops(user_x, user_y, shops)
     
     for shop in closest_shops:
         print(f"{shop[0]}: {shop[1]:.4f}")
