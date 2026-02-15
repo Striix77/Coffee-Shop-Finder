@@ -43,3 +43,15 @@ Starbucks Seattle,0.0861
 Starbucks SF,10.0793
 ```
 
+## Usage
+
+This program has two runnable versions:
+
+__Command Line Version__
+
+`python .\closest_coffee_shop_cli.py 47.6 -122.4 https://raw.githubusercontent.com/Agilefreaks/test_oop/master/coffee_shops.csv`
+
+__UI Version__
+
+`python .\closest_coffee_shop_ui.py`
+
