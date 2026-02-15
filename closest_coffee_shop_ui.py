@@ -25,8 +25,10 @@ def find_shops():
         else:
             text = entry_text.get("1.0", tk.END)
             shops = parse_text(text)
+    except SystemExit:
+        messagebox.showerror("Error", "Failed to parse shop data. Please check the format and try again.")
+        return
     except Exception as e:
-        # Show network or parsing errors in a user-friendly dialog.
         messagebox.showerror("Error", f"Failed to fetch shop data: {e}")
         return
 
@@ -48,8 +50,6 @@ root.grid_rowconfigure(0, weight=1)
 root.grid_columnconfigure(0, weight=1)
 root.option_add("*Font", "Helvetica 14")
 
-
-
 style = ttk.Style()
 style.theme_use("xpnative")
 style.configure("Large.TRadiobutton", font=("Helvetica", 14))
@@ -63,7 +63,6 @@ wrapper.grid_columnconfigure(0, weight=1)
 main_frame = ttk.Frame(wrapper, padding="20")
 main_frame.grid(row=0, column=0)
 main_frame.grid_columnconfigure(0, weight=1)
-
 
 header_frame = ttk.Frame(main_frame)
 header_frame.grid(row=0, column=0, pady=(0, 20))
