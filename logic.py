@@ -11,6 +11,8 @@ def error_exit(message):
 def parse_shop_data(text):
     # Parse comma-separated text into a list of (name, x, y) tuples.
     data = text.splitlines()
+    if data==[""] or data==[]:
+        error_exit("Shop data cannot be empty.")
     reader = csv.reader(data)
     shops = []
 

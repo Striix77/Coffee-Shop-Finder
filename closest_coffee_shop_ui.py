@@ -39,7 +39,7 @@ def find_shops():
     output.configure(state=tk.NORMAL)
     output.delete(1.0, tk.END)
     for shop in closest_shops:
-        output.insert(tk.END, f"{shop[0]}: {shop[1]:.4f}\n")
+        output.insert(tk.END, f"{shop[0]},{shop[1]:.4f}\n")
     output.configure(state=tk.DISABLED)
 
 
@@ -51,7 +51,15 @@ root.grid_columnconfigure(0, weight=1)
 root.option_add("*Font", "Helvetica 14")
 
 style = ttk.Style()
-style.theme_use("xpnative")
+try:
+    style.theme_use("xpnative")
+except tk.TclError as e:
+    print(f"Failed to set theme 'xpnative': {e}. Trying 'aqua'...")
+    try:
+        style.theme_use("aqua")
+    except tk.TclError as e:
+        print(f"Failed to set theme 'aqua': {e}. Falling back to 'clam'...")
+        style.theme_use("clam")
 style.configure("Large.TRadiobutton", font=("Helvetica", 14))
 style.configure("Large.TButton", font=("Helvetica", 14))
 

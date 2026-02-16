@@ -19,7 +19,7 @@ def main():
     closest_shops = calculate_closest_shops(user_x, user_y, shops)
     
     for shop in closest_shops:
-        print(f"{shop[0]}: {shop[1]:.4f}")
+        print(f"{shop[0]},{shop[1]:.4f}")
         
         
 if __name__ == "__main__":
